@@ -1,0 +1,495 @@
+openapi: 3.0.2
+info:
+    title: TripMax API
+    version: 1.0.0
+paths:
+    '/v1/users/{userId}/feed':
+        get:
+            tags:
+                - User
+            parameters:
+                -
+                    $ref: '#/components/parameters/UserIdParameter'
+                -
+                    $ref: '#/components/parameters/PageParameter'
+                -
+                    $ref: '#/components/parameters/PageSizeParameter'
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Post'
+                    description: Лента выгружена
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Получить ленту пользователя
+            description: Возвращает ленту постов указанного пользователя в обратном хронологическом порядке
+    '/v1/users/{userId}/follow':
+        post:
+            requestBody:
+                description: Запрос c subscribeeId
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                subscribeeId:
+                                    format: uuid
+                                    description: Идентификатор подписчика
+                                    type: string
+                required: true
+            tags:
+                - User
+            parameters:
+                -
+                    $ref: '#/components/parameters/UserIdParameter'
+            responses:
+                '201':
+                    description: Подписка оформлена
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Подписаться на пользователя
+            description: Оформляет подписку текущего пользователя на указанного пользователя
+        delete:
+            tags:
+                - User
+            parameters:
+                -
+                    $ref: '#/components/parameters/UserIdParameter'
+                -
+                    $ref: '#/components/parameters/SubscribeeIdParameter'
+            responses:
+                '200':
+                    description: Отписка успешна
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Отписаться от пользователя
+            description: Отменяет подписку текущего пользователя на указанного пользователя
+    /v1/posts:
+        post:
+            requestBody:
+                description: Запрос на публикацию поста
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                description:
+                                    description: Описание
+                                    maxLength: 1000
+                                    type: string
+                                userId:
+                                    format: uuid
+                                    description: 'Идентификатор пользователя, опубликовавшего пост'
+                                    type: string
+                                locationId:
+                                    format: uuid
+                                    description: 'Идентификатор места, к которому относится пост'
+                                    type: string
+                                attachments:
+                                    description: Идентификаторы фото
+                                    maxItems: 3
+                                    type: array
+                                    items:
+                                        format: uuid
+                                        type: string
+            tags:
+                - Post
+            responses:
+                '201':
+                    description: Пост создан
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Опубликовать пост
+            description: 'Создаёт новый пост о путешествии с описанием, фотографиями и геометкой'
+    '/v1/posts/{postId}/reaction':
+        post:
+            tags:
+                - Post
+            parameters:
+                -
+                    $ref: '#/components/parameters/PostIdParameter'
+            responses:
+                '201':
+                    description: Лайк создан
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Поставить лайк
+            description: Добавляет лайк на указанный пост
+        delete:
+            tags:
+                - Post
+            parameters:
+                -
+                    $ref: '#/components/parameters/PostIdParameter'
+            responses:
+                '200':
+                    description: Лайк удален
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Удалить лайк
+            description: Удаляет лайк с указанного поста
+    '/v1/posts/{postId}/comments':
+        get:
+            tags:
+                - Post
+            parameters:
+                -
+                    $ref: '#/components/parameters/PostIdParameter'
+                -
+                    $ref: '#/components/parameters/PageParameter'
+                -
+                    $ref: '#/components/parameters/PageSizeParameter'
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Comment'
+                    description: Комментарии выгружены
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Получить комментарии
+            description: Возвращает список комментариев к указанному посту
+        post:
+            requestBody:
+                description: Запрос на создание комментария к посту
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    description: Текст комментария
+                                    maxLength: 200
+                                    type: string
+                required: true
+            tags:
+                - Post
+            parameters:
+                -
+                    $ref: '#/components/parameters/PostIdParameter'
+            responses:
+                '200':
+                    description: Комментарий создан
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Добавить комментарий
+            description: Добавляет комментарий текущего пользователя к указанному посту
+        delete:
+            tags:
+                - Post
+            parameters:
+                -
+                    $ref: '#/components/parameters/PostIdParameter'
+            responses:
+                '200':
+                    description: Комментарий удален
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Удалить комментарий
+            description: >-
+                Удаляет комментарий текущего пользователя по идентификатору комментария в рамках указанного
+                поста
+    /v1/places:
+        get:
+            tags:
+                - Places
+            parameters:
+                -
+                    $ref: '#/components/parameters/PageParameter'
+                -
+                    $ref: '#/components/parameters/PageSizeParameter'
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Location'
+                    description: Популярные места выгружены
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Получить популярные места
+            description: Возвращает список популярных мест для путешествий
+    /v1/me/feed:
+        get:
+            tags:
+                - Me
+            parameters:
+                -
+                    $ref: '#/components/parameters/PageParameter'
+                -
+                    $ref: '#/components/parameters/PageSizeParameter'
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Post'
+                    description: Лента выгружена
+                '404':
+                    $ref: '#/components/responses/Error'
+                '500':
+                    $ref: '#/components/responses/Error'
+            summary: Получить персональную ленту
+            description: >-
+                Возвращает персонализированную ленту текущего пользователя на основе подписок в обратном
+                хронологическом порядке
+components:
+    schemas:
+        Photo:
+            description: Фотографии
+            required:
+                - id
+                - upload_at
+                - url
+            type: object
+            properties:
+                id:
+                    format: uuid
+                    description: Идентификатор фото
+                    type: string
+                url:
+                    description: URL фотографии (из CDN)
+                    type: string
+                upload_at:
+                    format: datetime
+                    description: Дата загрузки
+                    type: string
+        Post:
+            description: Пост пользователя
+            required:
+                - id
+                - user_id
+                - attachment_ids
+                - description
+                - created_at
+                - likes
+                - location_id
+            type: object
+            properties:
+                id:
+                    format: uuid
+                    description: Идентификатор
+                    type: string
+                user_id:
+                    format: uuid
+                    description: 'Идентификатор пользователя, который опубликовал пост'
+                    type: string
+                location_id:
+                    format: uuid
+                    description: Идентификатор локации
+                    type: string
+                description:
+                    description: Текст поста
+                    maxLength: 1000
+                    type: string
+                likes:
+                    description: Количество лайков
+                    type: number
+                created_at:
+                    format: datetime
+                    description: Дата создания
+                    type: string
+                attachment_ids:
+                    description: Идентификаторы фотографий
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Photo'
+        User:
+            description: Профиль пользователя
+            required:
+                - id
+                - login
+                - name
+            type: object
+            properties:
+                id:
+                    format: uuid
+                    description: Идентификатор
+                    type: string
+                login:
+                    description: Логин пользователя
+                    maxLength: 20
+                    type: string
+                name:
+                    description: Имя пользователя
+                    maxLength: 100
+                    type: string
+        Comment:
+            description: Комментарии
+            required:
+                - body
+                - created_at
+                - id
+                - post_id
+                - user_id
+            type: object
+            properties:
+                id:
+                    format: uuid
+                    description: Идентификатор
+                    type: string
+                user_id:
+                    format: uuid
+                    description: 'Идентификатор пользователя, который опубликовал комментарий'
+                    type: string
+                post_id:
+                    format: uuid
+                    description: Идентификатор поста
+                    type: string
+                body:
+                    description: Комментарий
+                    maxLength: 200
+                    type: string
+                created_at:
+                    format: datetime
+                    description: Дата создания
+                    type: string
+        Location:
+            description: Локация
+            required:
+                - id
+                - latitude
+                - longitude
+                - name
+            type: object
+            properties:
+                id:
+                    format: uuid
+                    description: Идентификатор
+                    type: string
+                name:
+                    description: Название локации
+                    type: string
+                latitude:
+                    description: Долгота локации
+                    type: string
+                longitude:
+                    description: Широта локации
+                    type: string
+        ErrorResponse:
+            description: 'Запрос, приходящий с ошибкой'
+            type: object
+            properties:
+                response_id:
+                    format: uuid
+                    description: Идентификатор запроса
+                    type: string
+                traceId:
+                    format: uuid
+                    description: Идентификатор трейса
+                    type: string
+                body:
+                    description: Сообщение
+                    type: string
+                date:
+                    format: datetime
+                    description: Дата
+                    type: string
+    responses:
+        Error:
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+            description: Ошибка
+    parameters:
+        PostIdParameter:
+            name: postId
+            description: Идентификатор поста
+            schema:
+                format: uuid
+                type: string
+            in: path
+            required: true
+        UserIdParameter:
+            name: userId
+            description: Идентификатор пользователя
+            schema:
+                format: uuid
+                type: string
+            in: path
+            required: true
+        PageParameter:
+            name: page
+            description: Номер страницы
+            schema:
+                default: 0
+                minimum: 0
+                type: number
+            in: query
+            required: false
+        PageSizeParameter:
+            name: pageSize
+            description: Размер страницы
+            schema:
+                default: 10
+                maximum: 10
+                type: number
+            in: query
+            required: false
+        PlaceIdParameter:
+            name: placeId
+            description: Идентификатор места
+            schema:
+                format: uuid
+                type: string
+            in: path
+            required: true
+        FileIdParameter:
+            name: fileId
+            description: Идентификатор файла
+            schema:
+                format: uuid
+                type: string
+            in: path
+            required: true
+        SubscribeeIdParameter:
+            name: subscribeeId
+            description: Идентификатор подписчика
+            schema:
+                format: uuid
+                type: string
+            in: query
+            required: true
+tags:
+    -
+        name: User
+        description: ''
+    -
+        name: Post
+        description: ''
+    -
+        name: Places
+        description: ''
+    -
+        name: Me
+        description: ''
