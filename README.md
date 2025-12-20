@@ -49,27 +49,32 @@
     - Загрузка комментариев (батчем по 50 штук) не должна быть больше 1 секунды
 
 ### Структуры данных
+User (300 B):
+- id (8 B)
+- login (20 B)
+- name (100 B * 2.5)
+
 Post (3 KB):
 - id (8 B)
 - user_id (8 B)
-- description (1 000 B * 2.5 (utf-8))
+- location_id (8 B)
 - attachment_ids (8 B * 10)
-- latitude (8 B)
-- longitude (8 B)
+- description (1 000 B * 2.5 (utf-8))
 - likes (4 B)
 - created_at (8 B)
 
 Comment (600 B):
-- id
-- user_id
-- body
-- created_at
+- id (8 B)
+- user_id (8 B)
+- post_id (8 B)
+- body (200 B * 2.5)
+- created_at (8 B)
 
 Location (150 B):
-- id
-- name
-- latitude
-- longitude
+- id (8 B)
+- name (100 B * 2.5)
+- latitude (8 B)
+- longitude (8 B)
 
 
 
