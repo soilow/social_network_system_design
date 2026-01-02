@@ -143,6 +143,8 @@ SSD_for_capacity = 1.32 TB / 1 TB = 1 disk
 SSD_for_throughput = (6 MB/s + 42 KB/s) / 1 000 MB/s = 1 disk
 SSD_for_iops = 2014 / 1000 = 2 disks
 SSDs = max(...) = 2 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
 ```
 
 Фото:
@@ -157,6 +159,8 @@ SSD_for_capacity = 883 TB / 100 TB = 9 disk
 SSD_for_throughput = 4 000 MB/s / 1 000 MB/s = 4 disk
 SSD_for_iops = 4000 / 1000 = 4 disks
 SSDs = max(...) = 9 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
 ```
 
 Комментарии:
@@ -171,6 +175,8 @@ SSD_for_capacity = 6 TB / 6 TB = 1 disk
 SSD_for_throughput = 3 MB/s / 1 000 MB/s = 1 disk
 SSD_for_iops = 5300 / 1000 = 5 disks
 SSDs = max(...) = 5 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
 ```
 
 Поиск популярных мест:
