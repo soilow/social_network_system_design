@@ -34,7 +34,8 @@ Table posts {
 Table post_attachments {
     id uuid [primary key]
     post_id uuid [NOT NULL]
-    file_id uuid [NOT NULL]
+    url varchar(256) [NOT NULL]
+    uploaded_at timestamptz [default: `now()`]
 }
 
 Table comments {
@@ -45,12 +46,6 @@ Table comments {
     created_at timestamptz [default: `now()`]
 }
 
-Table files {
-    id uuid [primary key]
-    url varchar(256) [NOT NULL]
-    uploaded_at timestamptz [default: `now()`]
-}
-
 Ref: "posts"."user_id" < "users"."id"
 Ref: "comments"."user_id" < "users"."id"
 Ref: "comments"."post_id" < "posts"."id"
@@ -58,5 +53,3 @@ Ref: "post_attachments"."post_id" < "posts"."id"
 Ref: "posts"."location_id" < "locations"."id"
 Ref: "subscriptions"."subscriber_id" < "users"."id"
 Ref: "subscriptions"."subscribee_id" < "users"."id"
-
-Ref: "post_attachments"."file_id" < "files"."id"
