@@ -120,5 +120,75 @@ RPS (write): 10 000 000 DAU * 5 / 30 / 100 000 = 16
 ```
 RPS (write): 10 000 000 DAU * 10 / 30 / 100 000 = 33
 
-Traffic (read): 33 * 150 B = 5 KB/s
+Traffic (write): 33 * 150 B = 5 KB/s
 ```
+
+
+### Расчет HDD и SSD на 1 год
+| Характеристика                   | HDD       | SSD (SATA)           | SSD (nVME) |
+|----------------------------------|-----------|----------------------|------------|
+| Объем                            | до 32ТБ   | до 100ТБ             | до 30ТБ    |
+| Операции ввода-вывода в секунду  | 100       | 1 000                | 10 000     |
+| Пропускная способность           | 100 МБ/с  | 500 МБ/с             | 3 ГБ/с     |
+
+Посты:
+```
+Capacity = 42 KB/s * 86400 * 365 = 1,32 TB
+HDD_for_capacity = 1.32 TB / 0.5 TB = 3 disks
+HDD_for_throughput = (6 MB/s + 42 KB/s) / 100 MB/s = 1 disk
+HDD_for_iops = 2014 / 100 = 20 disks
+HDDs = max(...) = 20 disks
+
+SSD_for_capacity = 1.32 TB / 1 TB = 1 disk
+SSD_for_throughput = (6 MB/s + 42 KB/s) / 1 000 MB/s = 1 disk
+SSD_for_iops = 2014 / 1000 = 2 disks
+SSDs = max(...) = 2 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
+```
+
+Фото:
+```
+Capacity = 28 MB/s * 86400 * 365 = 883 TB
+HDD_for_capacity = 883 TB / 32 TB = 28 disks
+HDD_for_throughput = 4 000 MB/s / 100 MB/s = 40 disk
+HDD_for_iops = 4000 / 100 = 40 disks
+HDDs = max(...) = 40 disks
+
+SSD_for_capacity = 883 TB / 100 TB = 9 disk
+SSD_for_throughput = 4 000 MB/s / 1 000 MB/s = 4 disk
+SSD_for_iops = 4000 / 1000 = 4 disks
+SSDs = max(...) = 9 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
+```
+
+Комментарии:
+```
+Capacity = 180 KB/s * 86400 * 365 = 6 TB
+HDD_for_capacity = 6 TB / 2 TB = 3 disks
+HDD_for_throughput = 3 MB/s / 100 MB/s = 1 disk
+HDD_for_iops = 5300 / 100 = 53 disks
+HDDs = max(...) = 53 disks
+
+SSD_for_capacity = 6 TB / 6 TB = 1 disk
+SSD_for_throughput = 3 MB/s / 1 000 MB/s = 1 disk
+SSD_for_iops = 5300 / 1000 = 5 disks
+SSDs = max(...) = 5 disks
+
+Мой выбор: SSD, т.к. бюджет не ограничен
+```
+
+Поиск популярных мест:
+```
+Capacity = 5 KB/s * 86400 * 365 = 157 GB
+HDD_for_capacity = 157 GB / ... TB = 1 disk
+HDD_for_throughput = 5 KB/s / 100 MB/s = 1 disk
+HDD_for_iops = 33 / 100 = 1 disks
+HDDs = max(...) = 1 disks
+
+SSD is not necessary
+```
+
+### Схема базы данных
+![БД](db_scheme.png)

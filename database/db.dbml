@@ -1,0 +1,55 @@
+Table users {
+    id uuid [primary key]
+    login varchar(20) [NOT NULL]
+    first_name varchar(50) [NOT NULL]
+    last_name varchar(50) [NOT NULL]
+    middle_name varchar(50)
+    created_at timestamptz [default: `now()`]
+}
+
+Table subscriptions {
+    id uuid [primary key]
+    subscriber_id uuid [NOT NULL]
+    subscribee_id uuid [NOT NULL]
+    created_at timestamptz [default: `now()`]
+}
+
+// CREATE EXTENSION IF NOT EXISTS postgis
+Table locations {
+    id uuid [primary key]
+    name varchar(100) [NOT NULL]
+    place geography(Point, 4326) [NOT NULL]
+}
+
+Table posts {
+    id uuid [primary key]
+    user_id uuid [NOT NULL]
+    location_id uuid [NOT NULL]
+    description varchar(1000)
+    like_count integer [default: 0]
+    comment_count integer [default: 0]
+    created_at timestamptz [default: `now()`]
+}
+
+Table post_attachments {
+    id uuid [primary key]
+    post_id uuid [NOT NULL]
+    url varchar(256) [NOT NULL]
+    uploaded_at timestamptz [default: `now()`]
+}
+
+Table comments {
+    id uuid [primary key]
+    user_id uuid [NOT NULL]
+    post_id uuid [NOT NULL]
+    body varchar(200)
+    created_at timestamptz [default: `now()`]
+}
+
+Ref: "posts"."user_id" < "users"."id"
+Ref: "comments"."user_id" < "users"."id"
+Ref: "comments"."post_id" < "posts"."id"
+Ref: "post_attachments"."post_id" < "posts"."id"
+Ref: "posts"."location_id" < "locations"."id"
+Ref: "subscriptions"."subscriber_id" < "users"."id"
+Ref: "subscriptions"."subscribee_id" < "users"."id"
