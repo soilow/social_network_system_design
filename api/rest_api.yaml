@@ -3,7 +3,7 @@ info:
     title: TripMax API
     version: 1.0.0
 paths:
-    '/v1/users/{userId}/feed':
+    '/v1/users/{userId}/posts':
         get:
             tags:
                 - User
@@ -29,7 +29,7 @@ paths:
                     $ref: '#/components/responses/Error'
             summary: Получить ленту пользователя
             description: Возвращает ленту постов указанного пользователя в обратном хронологическом порядке
-    '/v1/users/{userId}/follow':
+    '/v1/users/{userId}/following':
         post:
             requestBody:
                 description: Запрос c subscribeeId
@@ -113,7 +113,7 @@ paths:
                     $ref: '#/components/responses/Error'
             summary: Опубликовать пост
             description: 'Создаёт новый пост о путешествии с описанием, фотографиями и геометкой'
-    '/v1/posts/{postId}/reaction':
+    '/v1/posts/{postId}/reactions':
         post:
             tags:
                 - Post
@@ -262,6 +262,41 @@ paths:
             description: >-
                 Возвращает персонализированную ленту текущего пользователя на основе подписок в обратном
                 хронологическом порядке
+    /v1/files:
+        post:
+          summary: Загрузить файл
+          description: Сохраняет файл(медиа) и возвращает метаданные
+          tags:
+            - Files
+          requestBody:
+            description: Запрос на загрузку файла
+            content:
+              multipart/form-data:
+                schema:
+                  type: object
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+                      description: Загружаемый файл
+                      x-file-max-size: 1048576
+                      x-file-max-size-human: "1MB"
+                      x-allowed-mime-types:
+                        - image/jpeg
+                        - image/png
+          responses:
+            '200':
+              description: Файл успешно загружен
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/File'
+            '400':
+              $ref: '#/components/responses/Error'
+            '413':
+              $ref: '#/components/responses/Error'
+            '500':
+              $ref: '#/components/responses/Error'
 components:
     schemas:
         Photo:
@@ -414,6 +449,22 @@ components:
                     format: datetime
                     description: Дата
                     type: string
+
+        File:
+          description: Файл
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Идентификатор файла
+            url:
+              type: string
+              description: Ссылка для скачивания файла
+            uploadDate:
+              type: string
+              format: datetime
+              description: Время загрузки файла
     responses:
         Error:
             content:
