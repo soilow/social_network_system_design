@@ -190,5 +190,42 @@ HDDs = max(...) = 1 disks
 SSD is not necessary
 ```
 
+### Расчет хостов
+Посты:
+- PostgreSQL
+- Replication Factor = 3
+- 2 async реплики, т.к. нужно обеспечивать быстрые скорости, но при этом не так важна целостность
+- Master-slave
+- Шардирование по location_id
+- Hosts = disks / disks_per_host =  2 * 2 = 4 hosts
+- Hosts_with_replication = hosts * replication_factor  = 4 * 3 = 12 hosts
+
+Фото:
+- S3
+- Replication Factor = 3
+- 2 async реплики
+- Master-slave
+- Шардирование по location_id
+- Hosts = disks / disks_per_host =  9 * 2 = 18 hosts
+- Hosts_with_replication = hosts * replication_factor  = 18 * 3 = 54 hosts
+
+Комментарии:
+- PostgreSQL
+- Replication Factor = 3
+- 2 async реплики
+- Master-slave
+- Шардирование по location_id
+- Hosts = disks / disks_per_host =  5 * 2 = 10 hosts
+- Hosts_with_replication = hosts * replication_factor  = 10 * 3 = 30 hosts
+
+Поиск популярных мест:
+- PostgreSQL
+- Replication Factor = 2
+- 1 async реплика
+- Master-slave
+- Шардирование по name
+- Hosts = disks / disks_per_host =  1 * 2 = 2 hosts
+- Hosts_with_replication = hosts * replication_factor  = 2 * 2 = 4 hosts
+
 ### Схема базы данных
 ![БД](db_scheme.png)
